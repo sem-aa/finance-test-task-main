@@ -1,0 +1,21 @@
+.green {
+   
+
+    color: green;
+}
+
+.red{
+     color: red;
+}
+
+.down {
+    height: 24px;
+    width: 12px;
+    fill: red;
+}
+
+.up {
+    height: 24px;
+    width: 12px;
+    fill: green;
+}
