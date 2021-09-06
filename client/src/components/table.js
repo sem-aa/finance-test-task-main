@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTickersOperation } from "../redux/operations";
 import id from "uniqid";
@@ -15,7 +15,6 @@ import sprite from "../img/sprite.svg";
 export default function TableTickers() {
   const dispatch = useDispatch();
   const allTickers = useSelector(fetchTickersData);
-  // const [stateTickers, setStateTickers] = useState([]);
 
   useEffect(() => {
     dispatch(fetchTickersOperation());
@@ -25,6 +24,18 @@ export default function TableTickers() {
   const lastTickers = allTickers[indexLastTickers];
   const indexPrevTickers = allTickers.length - 2;
   const prevTikers = allTickers[indexPrevTickers];
+
+  console.log('prev', prevTikers)
+  console.log('lastTickers', lastTickers)
+
+  const arr1 = [];
+
+  arr1.push(prevTikers, lastTickers);
+
+  // console.log(arr1.reduce( (prev, last) => prev + last.price, 0 ))
+
+  // const arr = lastTickers.push(prevTikers)
+  // console.log(arr)
 
   const makeClass = (a, b) => (a > b ? style.green : style.red);
 
@@ -47,20 +58,23 @@ export default function TableTickers() {
             </tr>
           </thead>
           <tbody>
-            {lastTickers &&
-              lastTickers.map((ticker) => (
-                <tr key={id()}>
-                  <th> {makeNameTickers(ticker.ticker)} </th>
-                  <th>{ticker.exchange}</th>
-                  <th> {ticker.price}$</th>
-                  <th>{ticker.change}</th>
-                  <th>{ticker.change_percent}%</th>
-                  <th>{ticker.dividend}</th>
-                  <th>{ticker.yield}</th>
-                  <th>{getDateFormat(ticker.last_trade_time)}</th>
-                  <th>{getCurrentTime(ticker.last_trade_time)}</th>
-                </tr>
-              ))}
+            {lastTickers?.map((ticker) => (
+              <tr key={id()}>
+                {prevTikers?.map((prev) => (
+                  <>
+                    <th> {makeNameTickers(ticker.ticker)} </th>
+                    <th>{ticker.exchange}</th>
+                    <th>{prev.price} {ticker.price} $</th>
+                    <th>{ticker.change}</th>
+                    <th>{ticker.change_percent}%</th>
+                    <th>{ticker.dividend}</th>
+                    <th>{ticker.yield}</th>
+                    <th>{getDateFormat(ticker.last_trade_time)}</th>
+                    <th>{getCurrentTime(ticker.last_trade_time)}</th>
+                  </>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </Table>
         {/* <Table striped bordered hover>
