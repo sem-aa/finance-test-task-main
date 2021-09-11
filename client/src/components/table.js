@@ -10,7 +10,7 @@ import {
 import fetchTickersData from "../redux/selectors";
 import { Table, Container } from "react-bootstrap";
 import style from "./table.module.css";
-import sprite from "../img/sprite.svg";
+// import sprite from "../img/sprite.svg";
 
 export default function TableTickers() {
   const dispatch = useDispatch();
@@ -20,24 +20,17 @@ export default function TableTickers() {
     dispatch(fetchTickersOperation());
   }, [dispatch]);
 
-  const indexLastTickers = allTickers.length - 1;
-  const lastTickers = allTickers[indexLastTickers];
-  const indexPrevTickers = allTickers.length - 2;
-  const prevTikers = allTickers[indexPrevTickers];
+  const lastTickers = allTickers[allTickers.length - 1];
+  const prevTikers = allTickers[allTickers.length - 2] || [];
 
-  console.log('prev', prevTikers)
-  console.log('lastTickers', lastTickers)
+  const getPrevField = (tickerName, field) => {
+    const exactTicker = prevTikers?.filter(
+      (ticker) => ticker.ticker === tickerName
+    );
+    return exactTicker[0]?.[field];
+  };
 
-  const arr1 = [];
-
-  arr1.push(prevTikers, lastTickers);
-
-  // console.log(arr1.reduce( (prev, last) => prev + last.price, 0 ))
-
-  // const arr = lastTickers.push(prevTikers)
-  // console.log(arr)
-
-  const makeClass = (a, b) => (a > b ? style.green : style.red);
+  const makeClass = (lastTicker, prevTicker) => (Number(lastTicker) > Number(prevTicker) ? style.green : style.red);
 
   return (
     <>
@@ -49,7 +42,6 @@ export default function TableTickers() {
               <th>Exchange</th>
               <th>Price</th>
               <th>Change</th>
-
               <th>Percent</th>
               <th>Dividend</th>
               <th>Yield</th>
@@ -58,108 +50,58 @@ export default function TableTickers() {
             </tr>
           </thead>
           <tbody>
-            {lastTickers?.map((ticker) => (
+            {lastTickers?.map((ticker, index) => (
               <tr key={id()}>
-                {prevTikers?.map((prev) => (
-                  <>
-                    <th> {makeNameTickers(ticker.ticker)} </th>
-                    <th>{ticker.exchange}</th>
-                    <th>{prev.price} {ticker.price} $</th>
-                    <th>{ticker.change}</th>
-                    <th>{ticker.change_percent}%</th>
-                    <th>{ticker.dividend}</th>
-                    <th>{ticker.yield}</th>
-                    <th>{getDateFormat(ticker.last_trade_time)}</th>
-                    <th>{getCurrentTime(ticker.last_trade_time)}</th>
-                  </>
-                ))}
+                <>
+                  <th>{makeNameTickers(ticker.ticker)} </th>
+                  <th>{ticker.exchange} </th>
+                  <th
+                    className={makeClass(
+                      ticker.price,
+                      getPrevField(ticker.ticker, "price")
+                    )}
+                  >
+                    {ticker.price} $
+                  </th>
+                  <th
+                    className={makeClass(
+                      ticker.change,
+                      getPrevField(ticker.ticker, "change")
+                    )}
+                  >
+                    {ticker.change}
+                  </th>
+                  <th
+                    className={makeClass(
+                      ticker.change_percent,
+                      getPrevField(ticker.ticker, "change_percent")
+                    )}
+                  >
+                    {ticker.change_percent}%{" "}
+                  </th>
+                  <th
+                    className={makeClass(
+                      ticker.dividend,
+                      getPrevField(ticker.ticker, "dividend")
+                    )}
+                  >
+                    {ticker.dividend}{" "}
+                  </th>
+                  <th
+                    className={makeClass(
+                      ticker.yield,
+                      getPrevField(ticker.ticker, "yield")
+                    )}
+                  >
+                    {ticker.yield}{" "}
+                  </th>
+                  <th>{getDateFormat(ticker.last_trade_time)}</th>
+                  <th>{getCurrentTime(ticker.last_trade_time)}</th>
+                </>
               </tr>
             ))}
           </tbody>
         </Table>
-        {/* <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Exchange</th>
-              <th>Price</th>
-              <th>Change</th>
-
-              <th>Percent</th>
-              <th>Dividend</th>
-              <th>Yield</th>
-              <th>Date</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allTickers.length > 0 &&
-              allTickers.map((ticker) => (
-                <tr key={id()}>
-                  <th>{makeNameTickers(ticker[ticker.length - 1].ticker)} </th>
-                  <th>{ticker[ticker.length - 1].exchange}</th>
-                  <th
-                    className={makeClass(
-                      ticker[ticker.length - 1].price,
-                      ticker[ticker.length - 2].price
-                    )}
-                  >
-                    {ticker[ticker.length - 1].price}$
-                    <svg className={style.down}>
-                      <use href={sprite + "#icon-arrow-down"}></use>
-                    </svg>
-                  </th>
-                  <th
-                    className={
-                      ticker[ticker.length - 1].change >
-                      ticker[ticker.length - 2].change
-                        ? style.green
-                        : style.red
-                    }
-                  >
-                    {ticker[ticker.length - 1].change}
-                  </th>
-                  <th
-                    className={
-                      ticker[ticker.length - 1].change_percent >
-                      ticker[ticker.length - 2].change
-                        ? style.green
-                        : style.red
-                    }
-                  >
-                    {ticker[ticker.length - 1].change_percent}%
-                  </th>
-                  <th
-                    className={
-                      ticker[ticker.length - 1].dividend >
-                      ticker[ticker.length - 2].dividend
-                        ? style.green
-                        : style.red
-                    }
-                  >
-                    {" "}
-                    {ticker[ticker.length - 1].dividend}
-                  </th>
-                  <th
-                    className={
-                      ticker[ticker.length - 1].yield >
-                      ticker[ticker.length - 2].yield
-                        ? style.green
-                        : style.red
-                    }
-                  >
-                    {ticker[ticker.length - 1].yield}
-                  </th>
-                  <th>
-                    {getDateFormat(ticker[ticker.length - 1].last_trade_time)}
-                  </th>
-                  <th>
-                    {getCurrentTime(ticker[ticker.length - 1].last_trade_time)}
-                  </th>
-                </tr>
-              ))}
-          </tbody>
-        </Table> */}
       </Container>
     </>
   );
