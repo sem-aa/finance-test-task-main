@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Table component render 1`] = `ShallowWrapper {}`;
+
+exports[`returns the default emty array when there is no tickers to map through 1`] = `ShallowWrapper {}`;
