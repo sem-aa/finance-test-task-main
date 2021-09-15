@@ -1,25 +1,15 @@
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchTickersOperation } from "../redux/operations";
 import id from "uniqid";
 import {
   makeNameTickers,
   getDateFormat,
   getCurrentTime,
-} from "../helper/helper";
-import fetchTickersData from "../redux/selectors";
+} from "../../helper/helper";
+
 import { Table, Container } from "react-bootstrap";
-import style from "./table.module.css";
+import style from "./Table.module.css";
 // import sprite from "../img/sprite.svg";
 
-export default function TableTickers() {
-  const dispatch = useDispatch();
-  const allTickers = useSelector(fetchTickersData);
-
-  useEffect(() => {
-    dispatch(fetchTickersOperation());
-  }, [dispatch]);
-
+export default function TableTickers({ allTickers }) {
   const lastTickers = allTickers[allTickers.length - 1];
   const prevTikers = allTickers[allTickers.length - 2] || [];
 
@@ -30,7 +20,8 @@ export default function TableTickers() {
     return exactTicker[0]?.[field];
   };
 
-  const makeClass = (lastTicker, prevTicker) => (Number(lastTicker) > Number(prevTicker) ? style.green : style.red);
+  const makeClass = (lastTicker, prevTicker) =>
+    Number(lastTicker) > Number(prevTicker) ? style.green : style.red;
 
   return (
     <>

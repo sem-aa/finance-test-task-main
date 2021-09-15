@@ -1,10 +1,10 @@
-import Table from "./components/table";
+import Main from "./views/Main";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
     <div className="App">
-      <Table />
+      <Main />
     </div>
   );
 }
